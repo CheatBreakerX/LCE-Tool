@@ -1,0 +1,6 @@
+export enum DoorHinge {
+	NORTHEAST,
+	SOUTHEAST,
+	SOUTHWEST,
+	NORTHWEST
+}
