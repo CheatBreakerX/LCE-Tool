@@ -2,4 +2,4 @@
 
 work in progress port of mcctoolchest to an open source, crossplatform, webapp using fluent svelte
 
-![image](https://github.com/CheatBreakerX/LCE-Tool/blob/master/assets/electron_HlCdBHBIZu.png?raw=true)
+![image](https://github.com/CheatBreakerX/LCE-Tool/blob/master/assets/electron_PfwznT7CEk.png?raw=true)
