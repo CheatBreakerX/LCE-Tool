@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "fluent-svelte/theme.css";
 	import * as Fluent from "fluent-svelte";
+	import SplitPane from "./frontend/LCETool/UI/SplitPane.svelte";
 
 	let displayWarningDialog = true;
 	let listSel = false;
@@ -31,7 +32,7 @@
 </script>
 
 <main>
-	<div class="lt-app-frame">
+	<!--div class="lt-app-frame">
 		<Fluent.Checkbox bind:checked={listSel}>hi</Fluent.Checkbox>
 		<Fluent.TextBox bind:value />
 		<Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>Text</Fluent.ListItem>
@@ -58,27 +59,53 @@
 				<Fluent.Button on:click={() => (displayWarningDialog = false)}>Acknowledge</Fluent.Button>
 			</svelte:fragment>
 		</Fluent.ContentDialog>
-	</div>
+	</div-->
+	<SplitPane>
+		<div slot="left">
+			<h1>Left Pane</h1>
+			<p>the data path (file?) explorer will go here</p>
+		</div>
+		<div slot="right">
+			<h1>Right Pane</h1>
+			<p>the nbt editor will go here, have some test stuff</p>
+
+			<Fluent.Checkbox bind:checked={listSel}>hi</Fluent.Checkbox>
+			<Fluent.TextBox bind:value />
+			<Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>Text</Fluent.ListItem>
+			<p>
+				Current: {value} <br/>
+				listSel: {listSel ? "checked" : "unchecked"}
+			</p>
+			<p>
+				{#each exampleFileList as { name, content }}
+					<p>
+						{name}: {content}
+					</p>
+				{/each}
+			</p>
+			<Fluent.Button on:click={() => (displayWarningDialog = true)}>Open Dialog</Fluent.Button>
+		</div>
+	</SplitPane>
+
+	<Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
+		This software is under construction - things may be unimplemented, not work, or give unexpected output.
+		Do not ask for support, open an issue report or a pull request (at <a href="https://github.com/CheatBreakerX/LCE-Tool">this repo</a>)
+		if you are willing to fix the issue(s) yourself.<br/>
+		<br/>
+		<em>- Lifix (<a href="https://discord.com/users/180430713873498113">@lifix</a> on Discord)</em>
+		<svelte:fragment slot="footer">
+			<Fluent.Button on:click={() => (displayWarningDialog = false)}>Acknowledge</Fluent.Button>
+		</svelte:fragment>
+	</Fluent.ContentDialog>
 </main>
 
 <style>
-	.lt-app-frame {
-		padding: 8px;
-	}
-
 	:global(body) {
 		background-color: var(--fds-solid-background-base);
 		color: var(--fds-text-primary);
 	}
 
 	main {
-		max-width: 240px;
 		margin: 0 auto;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
 	}
 </style>
