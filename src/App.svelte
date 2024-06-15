@@ -1,7 +1,6 @@
 <script lang="ts">
 	import "fluent-svelte/theme.css";
 	import * as Fluent from "fluent-svelte";
-	import { UserObject } from "./backend/LCETool/Discord/User/UserObject";
 
 	let displayWarningDialog = true;
 	let listSel = false;
@@ -35,7 +34,7 @@
 	<div class="lt-app-frame">
 		<Fluent.Checkbox bind:checked={listSel}>hi</Fluent.Checkbox>
 		<Fluent.TextBox bind:value />
-		<Fluent.ListItem bind:selected={listSel}>Text</Fluent.ListItem>
+		<Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>Text</Fluent.ListItem>
 		<p>
 			Current: {value} <br/>
 			listSel: {listSel ? "checked" : "unchecked"}

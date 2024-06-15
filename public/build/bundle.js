@@ -26575,12 +26575,12 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[10] = list[i].name;
-    	child_ctx[11] = list[i].content;
+    	child_ctx[11] = list[i].name;
+    	child_ctx[12] = list[i].content;
     	return child_ctx;
     }
 
-    // (33:2) <Fluent.Checkbox bind:checked={listSel}>
+    // (32:2) <Fluent.Checkbox bind:checked={listSel}>
     function create_default_slot_4(ctx) {
     	let t;
 
@@ -26600,14 +26600,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(33:2) <Fluent.Checkbox bind:checked={listSel}>",
+    		source: "(32:2) <Fluent.Checkbox bind:checked={listSel}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (35:2) <Fluent.ListItem bind:selected={listSel}>
+    // (34:2) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>
     function create_default_slot_3(ctx) {
     	let t;
 
@@ -26627,20 +26627,20 @@ var app = (function () {
     		block,
     		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(35:2) <Fluent.ListItem bind:selected={listSel}>",
+    		source: "(34:2) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:3) {#each exampleFileList as { name, content }}
+    // (40:3) {#each exampleFileList as { name, content }}
     function create_each_block(ctx) {
     	let p;
-    	let t0_value = /*name*/ ctx[10] + "";
+    	let t0_value = /*name*/ ctx[11] + "";
     	let t0;
     	let t1;
-    	let t2_value = /*content*/ ctx[11] + "";
+    	let t2_value = /*content*/ ctx[12] + "";
     	let t2;
     	let t3;
 
@@ -26651,7 +26651,7 @@ var app = (function () {
     			t1 = text(": ");
     			t2 = text(t2_value);
     			t3 = space();
-    			add_location(p, file, 41, 4, 966);
+    			add_location(p, file, 40, 4, 952);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -26670,14 +26670,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(41:3) {#each exampleFileList as { name, content }}",
+    		source: "(40:3) {#each exampleFileList as { name, content }}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:2) <Fluent.Button on:click={() => (displayWarningDialog = true)}>
+    // (46:2) <Fluent.Button on:click={() => (displayWarningDialog = true)}>
     function create_default_slot_2(ctx) {
     	let t;
 
@@ -26697,14 +26697,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(47:2) <Fluent.Button on:click={() => (displayWarningDialog = true)}>",
+    		source: "(46:2) <Fluent.Button on:click={() => (displayWarningDialog = true)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:2) <Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
+    // (48:2) <Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
     function create_default_slot_1(ctx) {
     	let t0;
     	let a0;
@@ -26734,12 +26734,12 @@ var app = (function () {
     			a1.textContent = "@lifix";
     			t7 = text(" on Discord)");
     			attr_dev(a0, "href", "https://github.com/CheatBreakerX/LCE-Tool");
-    			add_location(a0, file, 50, 70, 1364);
-    			add_location(br0, file, 51, 51, 1482);
-    			add_location(br1, file, 52, 3, 1491);
+    			add_location(a0, file, 49, 70, 1350);
+    			add_location(br0, file, 50, 51, 1468);
+    			add_location(br1, file, 51, 3, 1477);
     			attr_dev(a1, "href", "https://discord.com/users/180430713873498113");
-    			add_location(a1, file, 53, 16, 1513);
-    			add_location(em, file, 53, 3, 1500);
+    			add_location(a1, file, 52, 16, 1499);
+    			add_location(em, file, 52, 3, 1486);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -26771,14 +26771,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(49:2) <Fluent.ContentDialog bind:open={displayWarningDialog} title=\\\"Warning\\\">",
+    		source: "(48:2) <Fluent.ContentDialog bind:open={displayWarningDialog} title=\\\"Warning\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (56:4) <Fluent.Button on:click={() => (displayWarningDialog = false)}>
+    // (55:4) <Fluent.Button on:click={() => (displayWarningDialog = false)}>
     function create_default_slot(ctx) {
     	let t;
 
@@ -26798,14 +26798,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(56:4) <Fluent.Button on:click={() => (displayWarningDialog = false)}>",
+    		source: "(55:4) <Fluent.Button on:click={() => (displayWarningDialog = false)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:3) <svelte:fragment slot="footer">
+    // (54:3) <svelte:fragment slot="footer">
     function create_footer_slot(ctx) {
     	let fluent_button;
     	let current;
@@ -26818,7 +26818,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	fluent_button.$on("click", /*click_handler_1*/ ctx[8]);
+    	fluent_button.$on("click", /*click_handler_2*/ ctx[9]);
 
     	const block = {
     		c: function create() {
@@ -26831,7 +26831,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const fluent_button_changes = {};
 
-    			if (dirty & /*$$scope*/ 16384) {
+    			if (dirty & /*$$scope*/ 32768) {
     				fluent_button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -26855,7 +26855,7 @@ var app = (function () {
     		block,
     		id: create_footer_slot.name,
     		type: "slot",
-    		source: "(55:3) <svelte:fragment slot=\\\"footer\\\">",
+    		source: "(54:3) <svelte:fragment slot=\\\"footer\\\">",
     		ctx
     	});
 
@@ -26947,6 +26947,7 @@ var app = (function () {
     		});
 
     	binding_callbacks.push(() => bind(fluent_listitem, 'selected', fluent_listitem_selected_binding));
+    	fluent_listitem.$on("click", /*click_handler*/ ctx[7]);
     	let each_value = /*exampleFileList*/ ctx[3];
     	validate_each_argument(each_value);
     	let each_blocks = [];
@@ -26963,10 +26964,10 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	fluent_button.$on("click", /*click_handler*/ ctx[7]);
+    	fluent_button.$on("click", /*click_handler_1*/ ctx[8]);
 
     	function fluent_contentdialog_open_binding(value) {
-    		/*fluent_contentdialog_open_binding*/ ctx[9](value);
+    		/*fluent_contentdialog_open_binding*/ ctx[10](value);
     	}
 
     	let fluent_contentdialog_props = {
@@ -27017,13 +27018,13 @@ var app = (function () {
     			create_component(fluent_button.$$.fragment);
     			t10 = space();
     			create_component(fluent_contentdialog.$$.fragment);
-    			add_location(br, file, 36, 20, 847);
-    			add_location(p0, file, 35, 2, 823);
-    			add_location(p1, file, 39, 2, 910);
+    			add_location(br, file, 35, 20, 833);
+    			add_location(p0, file, 34, 2, 809);
+    			add_location(p1, file, 38, 2, 896);
     			attr_dev(div, "class", "lt-app-frame svelte-iejz0p");
-    			add_location(div, file, 31, 1, 633);
+    			add_location(div, file, 30, 1, 581);
     			attr_dev(main, "class", "svelte-iejz0p");
-    			add_location(main, file, 30, 0, 625);
+    			add_location(main, file, 29, 0, 573);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27062,7 +27063,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const fluent_checkbox_changes = {};
 
-    			if (dirty & /*$$scope*/ 16384) {
+    			if (dirty & /*$$scope*/ 32768) {
     				fluent_checkbox_changes.$$scope = { dirty, ctx };
     			}
 
@@ -27084,7 +27085,7 @@ var app = (function () {
     			fluent_textbox.$set(fluent_textbox_changes);
     			const fluent_listitem_changes = {};
 
-    			if (dirty & /*$$scope*/ 16384) {
+    			if (dirty & /*$$scope*/ 32768) {
     				fluent_listitem_changes.$$scope = { dirty, ctx };
     			}
 
@@ -27124,14 +27125,14 @@ var app = (function () {
 
     			const fluent_button_changes = {};
 
-    			if (dirty & /*$$scope*/ 16384) {
+    			if (dirty & /*$$scope*/ 32768) {
     				fluent_button_changes.$$scope = { dirty, ctx };
     			}
 
     			fluent_button.$set(fluent_button_changes);
     			const fluent_contentdialog_changes = {};
 
-    			if (dirty & /*$$scope, displayWarningDialog*/ 16385) {
+    			if (dirty & /*$$scope, displayWarningDialog*/ 32769) {
     				fluent_contentdialog_changes.$$scope = { dirty, ctx };
     			}
 
@@ -27233,8 +27234,9 @@ var app = (function () {
     		$$invalidate(1, listSel);
     	}
 
-    	const click_handler = () => $$invalidate(0, displayWarningDialog = true);
-    	const click_handler_1 = () => $$invalidate(0, displayWarningDialog = false);
+    	const click_handler = () => $$invalidate(1, listSel = !listSel);
+    	const click_handler_1 = () => $$invalidate(0, displayWarningDialog = true);
+    	const click_handler_2 = () => $$invalidate(0, displayWarningDialog = false);
 
     	function fluent_contentdialog_open_binding(value) {
     		displayWarningDialog = value;
@@ -27270,6 +27272,7 @@ var app = (function () {
     		fluent_listitem_selected_binding,
     		click_handler,
     		click_handler_1,
+    		click_handler_2,
     		fluent_contentdialog_open_binding
     	];
     }
