@@ -1,14 +1,14 @@
 {
-  "name": "create-svelte-electron-app",
-  "version": "1.2.0",
-  "description": "The boilerplate code to get started creating Cross-platform Desktop Apps with Electron and Svelte as front-end technology.",
+  "name": "lce-tool",
+  "version": "1.0.0",
+  "description": "Open-source reimplemented version of MCCToolChest and other tools in TypeScript.",
   "private": false,
   "license": "MIT",
   "main": "main.js",
-  "author": "Souleh Shaikh <soulehshaikh99@gmail.com>",
+  "author": "Lifix <info@monarchupload.cc>",
   "build": {
     "icon": "public/favicon.png",
-    "productName": "Svelte and Electron App",
+    "productName": "LCE Tool",
     "files": [
       "public/**/*",
       "main.js",
@@ -16,7 +16,9 @@
     ],
     "win": {},
     "linux": {},
-    "mac": {}
+    "mac": {
+      "icon": "public/favicon.icns"
+    }
   },
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",

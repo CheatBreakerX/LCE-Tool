@@ -1,8 +1,9 @@
 <script lang="ts">
 	import "fluent-svelte/theme.css";
 	import * as Fluent from "fluent-svelte";
-	import { BlockId } from "./backend/MCCToolChest/BlockId";
+	import { UserObject } from "./backend/LCETool/Discord/User/UserObject";
 
+	let displayWarningDialog = true;
 	let listSel = false;
 	let value = "Default value";
 
@@ -32,9 +33,9 @@
 
 <main>
 	<div class="lt-app-frame">
-		<Fluent.Checkbox bind:listSel>hi</Fluent.Checkbox>
+		<Fluent.Checkbox bind:checked={listSel}>hi</Fluent.Checkbox>
 		<Fluent.TextBox bind:value />
-		<Fluent.ListItem selected:listSel>Text</Fluent.ListItem>
+		<Fluent.ListItem bind:selected={listSel}>Text</Fluent.ListItem>
 		<p>
 			Current: {value} <br/>
 			listSel: {listSel ? "checked" : "unchecked"}
@@ -46,6 +47,18 @@
 				</p>
 			{/each}
 		</p>
+		<Fluent.Button on:click={() => (displayWarningDialog = true)}>Open Dialog</Fluent.Button>
+
+		<Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
+			This software is under construction - things may be unimplemented, not work, or give unexpected output.
+			Do not ask for support, open an issue report or a pull request (at <a href="https://github.com/CheatBreakerX/LCE-Tool">this repo</a>)
+			if you are willing to fix the issue(s) yourself.<br/>
+			<br/>
+			<em>- Lifix (<a href="https://discord.com/users/180430713873498113">@lifix</a> on Discord)</em>
+			<svelte:fragment slot="footer">
+				<Fluent.Button on:click={() => (displayWarningDialog = false)}>Acknowledge</Fluent.Button>
+			</svelte:fragment>
+		</Fluent.ContentDialog>
 	</div>
 </main>
 
