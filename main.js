@@ -1,119 +1,115 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, MenuItem } = require('electron');
+const { app, BrowserWindow, Menu } = require("electron");
 const customTitlebar = require("custom-electron-titlebar/main");
-const path = require('path');
-const serve = require('electron-serve');
-const loadURL = serve({ directory: 'public' });
+const path = require("path");
+const serve = require("electron-serve");
+const loadURL = serve({ directory: "public" });
 
 customTitlebar.setupTitlebar();
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+const isMac = process.platform === "darwin";
 
 function isDev() {
 	return !app.isPackaged;
 }
 
 function createWindow() {
-	const isMac = process.platform === "darwin";
-
 	app.name = "LCE Tool";
 	Menu.setApplicationMenu(Menu.buildFromTemplate([
-		// { role: 'appMenu' }
+		// { role: "appMenu" }
 		...(isMac
 			? [
 				{
 					label: app.name,
 					submenu: [
 						{
-							label: "About LCE Tool",
+							label: `About ${app.name}`,
 							click: () => {
 								mainWindow.webContents.send("open-about");
 							}
 						},
-						{ type: 'separator' },
-						{ role: 'services' },
-						{ type: 'separator' },
-						{ role: 'hide' },
-						{ role: 'hideOthers' },
-						{ role: 'unhide' },
-						{ type: 'separator' },
-						{ role: 'quit' }
+						{ type: "separator" },
+						{ role: "services" },
+						{ type: "separator" },
+						{ role: "hide" },
+						{ role: "hideOthers" },
+						{ role: "unhide" },
+						{ type: "separator" },
+						{ role: "quit" }
 					]
 				}
 			]
 			: []
 		),
-		// { role: 'fileMenu' }
+		// { role: "fileMenu" }
 		{
-			label: 'File',
+			label: "File",
 			submenu: [
-				isMac ? { role: 'close' } : { role: 'quit' }
+				{ role: isMac ? "close" : "quit" }
 			]
 		},
-		// { role: 'editMenu' }
+		// { role: "editMenu" }
 		{
-			label: 'Edit',
+			label: "Edit",
 			submenu: [
-				{ role: 'undo' },
-				{ role: 'redo' },
-				{ type: 'separator' },
-				{ role: 'cut' },
-				{ role: 'copy' },
-				{ role: 'paste' },
+				{ role: "undo" },
+				{ role: "redo" },
+				{ type: "separator" },
+				{ role: "cut" },
+				{ role: "copy" },
+				{ role: "paste" },
 				...(isMac
 					? [
-						{ role: 'pasteAndMatchStyle' },
-						{ role: 'delete' },
-						{ role: 'selectAll' },
-						{ type: 'separator' },
+						{ role: "pasteAndMatchStyle" },
+						{ role: "delete" },
+						{ role: "selectAll" },
+						{ type: "separator" },
 						{
-							label: 'Speech',
+							label: "Speech",
 							submenu: [
-								{ role: 'startSpeaking' },
-								{ role: 'stopSpeaking' }
+								{ role: "startSpeaking" },
+								{ role: "stopSpeaking" }
 							]
 						}
 					]
 					: [
-						{ role: 'delete' },
-						{ type: 'separator' },
-						{ role: 'selectAll' }
+						{ role: "delete" },
+						{ type: "separator" },
+						{ role: "selectAll" }
 					]
 				)
 			]
 		},
-		// { role: 'viewMenu' }
+		// { role: "viewMenu" }
 		{
-			label: 'View',
+			label: "View",
 			submenu: [
-				{ role: 'reload' },
-				{ role: 'forceReload' },
-				{ role: 'toggleDevTools' },
-				{ type: 'separator' },
-				{ role: 'resetZoom' },
-				{ role: 'zoomIn' },
-				{ role: 'zoomOut' },
-				{ type: 'separator' },
-				{ role: 'togglefullscreen' }
+				{ role: "reload" },
+				{ role: "forceReload" },
+				{ role: "toggleDevTools" },
+				{ type: "separator" },
+				{ role: "resetZoom" },
+				{ role: "zoomIn" },
+				{ role: "zoomOut" },
+				{ type: "separator" },
+				{ role: "togglefullscreen" }
 			]
 		},
-		// { role: 'windowMenu' }
+		// { role: "windowMenu" }
 		{
-			label: 'Window',
+			label: "Window",
 			submenu: [
-				{ role: 'minimize' },
-				{ role: 'zoom' },
+				{ role: "minimize" },
+				{ role: "zoom" },
 				...(isMac
 					? [
-						{ type: 'separator' },
-						{ role: 'front' },
-						{ type: 'separator' },
-						{ role: 'window' }
+						{ type: "separator" },
+						{ role: "front" },
+						{ type: "separator" },
+						{ role: "window" }
 					]
 					: [
-						{ role: 'close' }
+						{ role: "close" }
 					]
 				)
 			]
@@ -176,23 +172,23 @@ function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 827,
 		height: 675,
-		titleBarStyle: 'hidden',
+		titleBarStyle: "hidden",
 		/* You can use *titleBarOverlay: true* to use the original Windows controls */
 		titleBarOverlay: true,
 		webPreferences: {
 			nodeIntegration: true,
-			preload: path.join(__dirname, 'preload.js'),
+			preload: path.join(__dirname, "preload.js"),
 			contextIsolation: true,
 			nodeIntegration: true
 		},
-		icon: path.join(__dirname, 'public/favicon.png'),
+		icon: path.join(__dirname, "public/favicon.png"),
 		show: false
 	});
 
 	// This block of code is intended for development purpose only.
 	// Delete this entire block of code when you are ready to package the application.
 	if (isDev()) {
-		mainWindow.loadURL('http://localhost:8080/');
+		mainWindow.loadURL("http://localhost:8080/");
 	} else {
 		loadURL(mainWindow);
 	}
@@ -201,11 +197,10 @@ function createWindow() {
 	// loadURL(mainWindow);
 
 	// Open the DevTools and also disable Electron Security Warning.
-	// process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = true;
+	// process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
 	// mainWindow.webContents.openDevTools();
 
-	// Emitted when the window is closed.
-	mainWindow.on('closed', function () {
+	mainWindow.on("closed", function () {
 		// Dereference the window object, usually you would store windows
 		// in an array if your app supports multi windows, this is the time
 		// when you should delete the corresponding element.
@@ -214,26 +209,26 @@ function createWindow() {
 
 	// Emitted when the window is ready to be shown
 	// This helps in showing the window gracefully.
-	mainWindow.once('ready-to-show', () => {
+	mainWindow.once("ready-to-show", () => {
 		mainWindow.show();
 	});
 
 	customTitlebar.attachTitlebarToWindow(mainWindow);
 }
 
-app.on('ready', createWindow);
+app.on("ready", createWindow);
 
-process.on('SIGTERM', () => {
+process.on("SIGTERM", () => {
     app.quit();
 });
 
-app.on('window-all-closed', function () {
-	if (process.platform !== 'darwin') {
+app.on("window-all-closed", function () {
+	if (!isMac) {
 		app.quit();
 	}
 });
 
-app.on('activate', function () {
+app.on("activate", function () {
 	if (mainWindow === null) {
 		createWindow();
 	}

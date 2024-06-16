@@ -1,7 +1,7 @@
 export class LootTableLookup {
 	static ConvertLootTable(inLootTable: string): string {
 		var text: string = inLootTable;
-		var num: number = inLootTable.lastIndexOf('/');
+		var num: number = inLootTable.lastIndexOf("/");
 		if (num > 0) {
 			var key: string = inLootTable.substring(num + 1);
 			if (LootTableLookup.lootTableXRef.hasOwnProperty(key)) {
