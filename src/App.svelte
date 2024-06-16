@@ -3,32 +3,36 @@
 	import * as Fluent from "fluent-svelte";
 	import * as Svelte from "svelte";
 	import SplitPane from "./frontend/LCETool/UI/SplitPane.svelte";
+	import type { FileTreeItem } from "./backend/LCETool/UI/FileTreeItem";
+	import { FileTreeItemType } from "./backend/LCETool/UI/FileTreeItemType";
+	import FileTree from "./frontend/LCETool/UI/FileTree.svelte";
 
 	let displayAboutDialog: boolean = false;
 	let displayWarningDialog: boolean = true;
 	let listSel: boolean = false;
 	let value: string = "Default value";
 
-	let exampleFileList = [
+	let exampleFileList: FileTreeItem[] = [
 		{
-			"name": "File #1",
-			"content": "Content #1"
+			type: FileTreeItemType.Folder,
+			label: "Super",
+			content: [
+				{
+					type: FileTreeItemType.File,
+					label: "very super (but not actually)",
+					content: "Good content"
+				}
+			]
 		},
 		{
-			"name": "File #2",
-			"content": "Content #2"
+			type: FileTreeItemType.File,
+			label: "A file",
+			content: "The content"
 		},
 		{
-			"name": "File #3",
-			"content": "Content #3"
-		},
-		{
-			"name": "File #4",
-			"content": "Content #4"
-		},
-		{
-			"name": "File #5",
-			"content": "Content #5"
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
 		}
 	];
 
@@ -40,38 +44,9 @@
 </script>
 
 <main>
-	<!--div class="lt-app-frame">
-		<Fluent.Checkbox bind:checked={listSel}>hi</Fluent.Checkbox>
-		<Fluent.TextBox bind:value />
-		<Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>Text</Fluent.ListItem>
-		<p>
-			Current: {value} <br/>
-			listSel: {listSel ? "checked" : "unchecked"}
-		</p>
-		<p>
-			{#each exampleFileList as { name, content }}
-				<p>
-					{name}: {content}
-				</p>
-			{/each}
-		</p>
-		<Fluent.Button on:click={() => (displayWarningDialog = true)}>Open Dialog</Fluent.Button>
-
-		<Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
-			This software is under construction - things may be unimplemented, not work, or give unexpected output.
-			Do not ask for support, open an issue report or a pull request (at <a href="https://github.com/CheatBreakerX/LCE-Tool">this repo</a>)
-			if you are willing to fix the issue(s) yourself.<br/>
-			<br/>
-			<em>- Lifix (<a href="https://discord.com/users/180430713873498113">@lifix</a> on Discord)</em>
-			<svelte:fragment slot="footer">
-				<Fluent.Button on:click={() => (displayWarningDialog = false)}>Acknowledge</Fluent.Button>
-			</svelte:fragment>
-		</Fluent.ContentDialog>
-	</div-->
 	<SplitPane>
 		<div slot="left">
-			<h1>Left Pane</h1>
-			<p>the data path (file?) explorer will go here</p>
+			<FileTree items={exampleFileList} />
 		</div>
 		<div slot="right">
 			<h1>Right Pane</h1>
@@ -83,13 +58,6 @@
 			<p>
 				Current: {value} <br/>
 				listSel: {listSel ? "checked" : "unchecked"}
-			</p>
-			<p>
-				{#each exampleFileList as { name, content }}
-					<p>
-						{name}: {content}
-					</p>
-				{/each}
 			</p>
 			<Fluent.Button on:click={() => (displayWarningDialog = true)}>Open Dialog</Fluent.Button>
 		</div>
