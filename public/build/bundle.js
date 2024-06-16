@@ -26585,6 +26585,8 @@ var app = (function () {
     	let div1;
     	let t1;
     	let div2;
+    	let t2;
+    	let script;
     	let current;
     	let mounted;
     	let dispose;
@@ -26603,17 +26605,22 @@ var app = (function () {
     			t1 = space();
     			div2 = element("div");
     			if (right_slot) right_slot.c();
-    			attr_dev(div0, "class", "pane svelte-kwzt8d");
+    			t2 = space();
+    			script = element("script");
+    			script.textContent = "//onResize(null);";
+    			attr_dev(div0, "class", "pane svelte-xr8rdd");
     			set_style(div0, "width", "32.648125755743652%");
     			set_style(div0, "padding", "10px");
-    			add_location(div0, file$1, 51, 1, 1164);
-    			attr_dev(div1, "class", "splitter svelte-kwzt8d");
-    			add_location(div1, file$1, 54, 1, 1289);
-    			attr_dev(div2, "class", "pane svelte-kwzt8d");
+    			add_location(div0, file$1, 67, 1, 1836);
+    			attr_dev(div1, "class", "splitter svelte-xr8rdd");
+    			add_location(div1, file$1, 70, 1, 1961);
+    			attr_dev(div2, "class", "pane svelte-xr8rdd");
     			set_style(div2, "flex", "1");
-    			add_location(div2, file$1, 55, 1, 1367);
-    			attr_dev(div3, "class", "container svelte-kwzt8d");
-    			add_location(div3, file$1, 50, 0, 1063);
+    			add_location(div2, file$1, 71, 1, 2039);
+    			attr_dev(script, "lang", "ts");
+    			add_location(script, file$1, 74, 1, 2134);
+    			attr_dev(div3, "class", "container svelte-xr8rdd");
+    			add_location(div3, file$1, 66, 0, 1735);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -26638,6 +26645,8 @@ var app = (function () {
     			}
 
     			/*div2_binding*/ ctx[10](div2);
+    			append_dev(div3, t2);
+    			append_dev(div3, script);
     			current = true;
 
     			if (!mounted) {
@@ -26716,6 +26725,10 @@ var app = (function () {
     	return block;
     }
 
+    function elementValid(element) {
+    	return element !== null && element !== undefined && element !== void 0;
+    }
+
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('SplitPane', slots, ['left','right']);
@@ -26746,6 +26759,22 @@ var app = (function () {
     		isResizing = false;
     	}
 
+    	function adjustPaneSize(event) {
+    		if (!(elementValid(leftPane) && elementValid(rightPane) && elementValid(splitter))) {
+    			return;
+    		}
+
+    		var h = window.innerHeight;
+    		const paneHeight = h - 68;
+    		const splitterMargin = paneHeight / 2 - 50;
+    		$$invalidate(0, leftPane.style.height = `${paneHeight}px`, leftPane);
+    		$$invalidate(1, rightPane.style.height = `${paneHeight}px`, rightPane);
+    		$$invalidate(2, splitter.style.marginTop = `${splitterMargin}px`, splitter);
+    		$$invalidate(2, splitter.style.marginBottom = `${splitterMargin}px`, splitter);
+    	}
+
+    	window.addEventListener("DOMContentLoaded", adjustPaneSize);
+    	window.addEventListener("resize", adjustPaneSize);
     	let leftPane;
     	let rightPane;
     	let splitter;
@@ -26784,9 +26813,11 @@ var app = (function () {
     		startX,
     		startWidth,
     		isResizing,
+    		elementValid,
     		onMouseDown,
     		onMouseMove,
     		onMouseUp,
+    		adjustPaneSize,
     		leftPane,
     		rightPane,
     		splitter
