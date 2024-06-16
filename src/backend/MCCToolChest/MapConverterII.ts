@@ -348,7 +348,7 @@ export class MapConverterII {
 	private blockIndex: BlockColorIndex[];
 	private colorGroupSize: number;
 
-	static globalColorIndex: Color[] = [
+	static readonly globalColorIndex: Color[] = [
 		new Color(0, 0, 0, 0),
 		new Color(0, 0, 0, 0),
 		new Color(0, 0, 0, 0),

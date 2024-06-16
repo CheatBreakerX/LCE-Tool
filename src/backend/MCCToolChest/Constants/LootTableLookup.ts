@@ -11,7 +11,7 @@ export class LootTableLookup {
 		return text;
 	}
 
-	static lootTableXRef: object = {
+	static readonly lootTableXRef: object = {
 		"abandoned_mineshaft": "abandoned_mineshaft.json",
 		"buried_treasure": "buriedtreasure.json",
 		"desert_pyramid": "desert_pyramid.json",
