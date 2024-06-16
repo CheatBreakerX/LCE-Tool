@@ -489,6 +489,16 @@ var app = (function () {
         return current_component;
     }
     /**
+     * Schedules a callback to run immediately before the component is updated after any state change.
+     *
+     * The first time the callback runs will be before the initial `onMount`
+     *
+     * https://svelte.dev/docs#run-time-svelte-beforeupdate
+     */
+    function beforeUpdate(fn) {
+        get_current_component().$$.before_update.push(fn);
+    }
+    /**
      * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
      * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
      * it can be called from an external module).
@@ -499,6 +509,25 @@ var app = (function () {
      */
     function onMount(fn) {
         get_current_component().$$.on_mount.push(fn);
+    }
+    /**
+     * Schedules a callback to run immediately after the component has been updated.
+     *
+     * The first time the callback runs will be after the initial `onMount`
+     */
+    function afterUpdate(fn) {
+        get_current_component().$$.after_update.push(fn);
+    }
+    /**
+     * Schedules a callback to run immediately before the component is unmounted.
+     *
+     * Out of `onMount`, `beforeUpdate`, `afterUpdate` and `onDestroy`, this is the
+     * only one that runs inside a server-side component.
+     *
+     * https://svelte.dev/docs#run-time-svelte-ondestroy
+     */
+    function onDestroy(fn) {
+        get_current_component().$$.on_destroy.push(fn);
     }
     /**
      * Creates an event dispatcher that can be used to dispatch [component events](/docs#template-syntax-component-directives-on-eventname).
@@ -549,6 +578,25 @@ var app = (function () {
      */
     function getContext(key) {
         return get_current_component().$$.context.get(key);
+    }
+    /**
+     * Retrieves the whole context map that belongs to the closest parent component.
+     * Must be called during component initialisation. Useful, for example, if you
+     * programmatically create a component and want to pass the existing context to it.
+     *
+     * https://svelte.dev/docs#run-time-svelte-getallcontexts
+     */
+    function getAllContexts() {
+        return get_current_component().$$.context;
+    }
+    /**
+     * Checks whether a given `key` has been set in the context of a parent component.
+     * Must be called during component initialisation.
+     *
+     * https://svelte.dev/docs#run-time-svelte-hascontext
+     */
+    function hasContext(key) {
+        return get_current_component().$$.context.has(key);
     }
     // TODO figure out if we still want to support
     // shorthand events, or if we want to implement
@@ -1343,6 +1391,42 @@ var app = (function () {
         }
         $capture_state() { }
         $inject_state() { }
+    }
+    /**
+     * Base class to create strongly typed Svelte components.
+     * This only exists for typing purposes and should be used in `.d.ts` files.
+     *
+     * ### Example:
+     *
+     * You have component library on npm called `component-library`, from which
+     * you export a component called `MyComponent`. For Svelte+TypeScript users,
+     * you want to provide typings. Therefore you create a `index.d.ts`:
+     * ```ts
+     * import { SvelteComponentTyped } from "svelte";
+     * export class MyComponent extends SvelteComponentTyped<{foo: string}> {}
+     * ```
+     * Typing this makes it possible for IDEs like VS Code with the Svelte extension
+     * to provide intellisense and to use the component like this in a Svelte file
+     * with TypeScript:
+     * ```svelte
+     * <script lang="ts">
+     * 	import { MyComponent } from "component-library";
+     * </script>
+     * <MyComponent foo={'bar'} />
+     * ```
+     *
+     * #### Why not make this part of `SvelteComponent(Dev)`?
+     * Because
+     * ```ts
+     * class ASubclassOfSvelteComponent extends SvelteComponent<{foo: string}> {}
+     * const component: typeof SvelteComponent = ASubclassOfSvelteComponent;
+     * ```
+     * will throw a type error, so we need to separate the more strictly typed class.
+     */
+    class SvelteComponentTyped extends SvelteComponentDev {
+        constructor(options) {
+            super(options);
+        }
     }
 
     /*!
@@ -5417,6 +5501,22 @@ var app = (function () {
     		throw new Error("<RadioButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
+
+    var Svelte = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        SvelteComponent: SvelteComponentDev,
+        SvelteComponentTyped: SvelteComponentTyped,
+        afterUpdate: afterUpdate,
+        beforeUpdate: beforeUpdate,
+        createEventDispatcher: createEventDispatcher,
+        getAllContexts: getAllContexts,
+        getContext: getContext,
+        hasContext: hasContext,
+        onDestroy: onDestroy,
+        onMount: onMount,
+        setContext: setContext,
+        tick: tick
+    });
 
     /* node_modules/fluent-svelte/ProgressRing/ProgressRing.svelte generated by Svelte v3.59.2 */
     const file$s = "node_modules/fluent-svelte/ProgressRing/ProgressRing.svelte";
@@ -11806,7 +11906,7 @@ var app = (function () {
     const get_buttons_slot_context$1 = ctx => ({});
 
     // (80:0) <TextBox  class="number-box {className ?? ''}"  type="number"  bind:inputElement  bind:containerElement  bind:buttonsContainerElement  bind:clearButtonElement  bind:value  on:outermousedown={() => (spinnerFlyoutOpen = false)}  on:change  on:input  on:beforeinput  on:click  on:blur  on:focus={() => (spinnerFlyoutOpen = true)}  on:focus  on:dblclick  on:contextmenu  on:mousedown  on:mouseup  on:mouseover  on:mouseout  on:mouseenter  on:mouseleave  on:keypress  on:keydown  on:keyup  on:clear  {min}  {max}  {step}  {disabled}  {...$$restProps} >
-    function create_default_slot_5(ctx) {
+    function create_default_slot_5$1(ctx) {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[24].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[56], null);
@@ -11854,7 +11954,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_5.name,
+    		id: create_default_slot_5$1.name,
     		type: "slot",
     		source: "(80:0) <TextBox  class=\\\"number-box {className ?? ''}\\\"  type=\\\"number\\\"  bind:inputElement  bind:containerElement  bind:buttonsContainerElement  bind:clearButtonElement  bind:value  on:outermousedown={() => (spinnerFlyoutOpen = false)}  on:change  on:input  on:beforeinput  on:click  on:blur  on:focus={() => (spinnerFlyoutOpen = true)}  on:focus  on:dblclick  on:contextmenu  on:mousedown  on:mouseup  on:mouseover  on:mouseout  on:mouseenter  on:mouseleave  on:keypress  on:keydown  on:keyup  on:clear  {min}  {max}  {step}  {disabled}  {...$$restProps} >",
     		ctx
@@ -12654,7 +12754,7 @@ var app = (function () {
     	let textbox_props = {
     		$$slots: {
     			buttons: [create_buttons_slot$1],
-    			default: [create_default_slot_5]
+    			default: [create_default_slot_5$1]
     		},
     		$$scope: { ctx }
     	};
@@ -26870,12 +26970,12 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i].name;
-    	child_ctx[12] = list[i].content;
+    	child_ctx[16] = list[i].name;
+    	child_ctx[17] = list[i].content;
     	return child_ctx;
     }
 
-    // (61:2) 
+    // (68:2) 
     function create_left_slot(ctx) {
     	let div;
     	let h1;
@@ -26890,10 +26990,10 @@ var app = (function () {
     			t1 = space();
     			p = element("p");
     			p.textContent = "the data path (file?) explorer will go here";
-    			add_location(h1, file, 61, 3, 1873);
-    			add_location(p, file, 62, 3, 1895);
+    			add_location(h1, file, 68, 3, 2080);
+    			add_location(p, file, 69, 3, 2102);
     			attr_dev(div, "slot", "left");
-    			add_location(div, file, 60, 2, 1852);
+    			add_location(div, file, 67, 2, 2059);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -26911,15 +27011,15 @@ var app = (function () {
     		block,
     		id: create_left_slot.name,
     		type: "slot",
-    		source: "(61:2) ",
+    		source: "(68:2) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:3) <Fluent.Checkbox bind:checked={listSel}>
-    function create_default_slot_4(ctx) {
+    // (76:3) <Fluent.Checkbox bind:checked={listSel}>
+    function create_default_slot_8(ctx) {
     	let t;
 
     	const block = {
@@ -26936,17 +27036,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_4.name,
+    		id: create_default_slot_8.name,
     		type: "slot",
-    		source: "(69:3) <Fluent.Checkbox bind:checked={listSel}>",
+    		source: "(76:3) <Fluent.Checkbox bind:checked={listSel}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (71:3) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>
-    function create_default_slot_3(ctx) {
+    // (78:3) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>
+    function create_default_slot_7(ctx) {
     	let t;
 
     	const block = {
@@ -26963,22 +27063,22 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_3.name,
+    		id: create_default_slot_7.name,
     		type: "slot",
-    		source: "(71:3) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>",
+    		source: "(78:3) <Fluent.ListItem bind:selected={listSel} on:click={() => (listSel = !listSel)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:4) {#each exampleFileList as { name, content }}
+    // (84:4) {#each exampleFileList as { name, content }}
     function create_each_block(ctx) {
     	let p;
-    	let t0_value = /*name*/ ctx[11] + "";
+    	let t0_value = /*name*/ ctx[16] + "";
     	let t0;
     	let t1;
-    	let t2_value = /*content*/ ctx[12] + "";
+    	let t2_value = /*content*/ ctx[17] + "";
     	let t2;
     	let t3;
 
@@ -26989,7 +27089,7 @@ var app = (function () {
     			t1 = text(": ");
     			t2 = text(t2_value);
     			t3 = space();
-    			add_location(p, file, 77, 5, 2414);
+    			add_location(p, file, 84, 5, 2621);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -27008,15 +27108,15 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(77:4) {#each exampleFileList as { name, content }}",
+    		source: "(84:4) {#each exampleFileList as { name, content }}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (83:3) <Fluent.Button on:click={() => (displayWarningDialog = true)}>
-    function create_default_slot_2(ctx) {
+    // (90:3) <Fluent.Button on:click={() => (displayWarningDialog = true)}>
+    function create_default_slot_6(ctx) {
     	let t;
 
     	const block = {
@@ -27033,16 +27133,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2.name,
+    		id: create_default_slot_6.name,
     		type: "slot",
-    		source: "(83:3) <Fluent.Button on:click={() => (displayWarningDialog = true)}>",
+    		source: "(90:3) <Fluent.Button on:click={() => (displayWarningDialog = true)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (65:2) 
+    // (72:2) 
     function create_right_slot(ctx) {
     	let div;
     	let h1;
@@ -27064,7 +27164,7 @@ var app = (function () {
     	let t9;
     	let br;
     	let t10;
-    	let t11_value = (/*listSel*/ ctx[1] ? "checked" : "unchecked") + "";
+    	let t11_value = (/*listSel*/ ctx[2] ? "checked" : "unchecked") + "";
     	let t11;
     	let t12;
     	let p2;
@@ -27073,16 +27173,16 @@ var app = (function () {
     	let current;
 
     	function fluent_checkbox_checked_binding(value) {
-    		/*fluent_checkbox_checked_binding*/ ctx[4](value);
+    		/*fluent_checkbox_checked_binding*/ ctx[5](value);
     	}
 
     	let fluent_checkbox_props = {
-    		$$slots: { default: [create_default_slot_4] },
+    		$$slots: { default: [create_default_slot_8] },
     		$$scope: { ctx }
     	};
 
-    	if (/*listSel*/ ctx[1] !== void 0) {
-    		fluent_checkbox_props.checked = /*listSel*/ ctx[1];
+    	if (/*listSel*/ ctx[2] !== void 0) {
+    		fluent_checkbox_props.checked = /*listSel*/ ctx[2];
     	}
 
     	fluent_checkbox = new Checkbox({
@@ -27093,13 +27193,13 @@ var app = (function () {
     	binding_callbacks.push(() => bind(fluent_checkbox, 'checked', fluent_checkbox_checked_binding));
 
     	function fluent_textbox_value_binding(value) {
-    		/*fluent_textbox_value_binding*/ ctx[5](value);
+    		/*fluent_textbox_value_binding*/ ctx[6](value);
     	}
 
     	let fluent_textbox_props = {};
 
-    	if (/*value*/ ctx[2] !== void 0) {
-    		fluent_textbox_props.value = /*value*/ ctx[2];
+    	if (/*value*/ ctx[3] !== void 0) {
+    		fluent_textbox_props.value = /*value*/ ctx[3];
     	}
 
     	fluent_textbox = new TextBox({
@@ -27110,16 +27210,16 @@ var app = (function () {
     	binding_callbacks.push(() => bind(fluent_textbox, 'value', fluent_textbox_value_binding));
 
     	function fluent_listitem_selected_binding(value) {
-    		/*fluent_listitem_selected_binding*/ ctx[6](value);
+    		/*fluent_listitem_selected_binding*/ ctx[7](value);
     	}
 
     	let fluent_listitem_props = {
-    		$$slots: { default: [create_default_slot_3] },
+    		$$slots: { default: [create_default_slot_7] },
     		$$scope: { ctx }
     	};
 
-    	if (/*listSel*/ ctx[1] !== void 0) {
-    		fluent_listitem_props.selected = /*listSel*/ ctx[1];
+    	if (/*listSel*/ ctx[2] !== void 0) {
+    		fluent_listitem_props.selected = /*listSel*/ ctx[2];
     	}
 
     	fluent_listitem = new ListItem({
@@ -27128,8 +27228,8 @@ var app = (function () {
     		});
 
     	binding_callbacks.push(() => bind(fluent_listitem, 'selected', fluent_listitem_selected_binding));
-    	fluent_listitem.$on("click", /*click_handler*/ ctx[7]);
-    	let each_value = /*exampleFileList*/ ctx[3];
+    	fluent_listitem.$on("click", /*click_handler*/ ctx[8]);
+    	let each_value = /*exampleFileList*/ ctx[4];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -27139,13 +27239,13 @@ var app = (function () {
 
     	fluent_button = new Button({
     			props: {
-    				$$slots: { default: [create_default_slot_2] },
+    				$$slots: { default: [create_default_slot_6] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	fluent_button.$on("click", /*click_handler_1*/ ctx[8]);
+    	fluent_button.$on("click", /*click_handler_1*/ ctx[9]);
 
     	const block = {
     		c: function create() {
@@ -27164,7 +27264,7 @@ var app = (function () {
     			t6 = space();
     			p1 = element("p");
     			t7 = text("Current: ");
-    			t8 = text(/*value*/ ctx[2]);
+    			t8 = text(/*value*/ ctx[3]);
     			t9 = space();
     			br = element("br");
     			t10 = text("\n\t\t\t\tlistSel: ");
@@ -27178,13 +27278,13 @@ var app = (function () {
 
     			t13 = space();
     			create_component(fluent_button.$$.fragment);
-    			add_location(h1, file, 65, 3, 1979);
-    			add_location(p0, file, 66, 3, 2002);
-    			add_location(br, file, 72, 21, 2290);
-    			add_location(p1, file, 71, 3, 2265);
-    			add_location(p2, file, 75, 3, 2356);
+    			add_location(h1, file, 72, 3, 2186);
+    			add_location(p0, file, 73, 3, 2209);
+    			add_location(br, file, 79, 21, 2497);
+    			add_location(p1, file, 78, 3, 2472);
+    			add_location(p2, file, 82, 3, 2563);
     			attr_dev(div, "slot", "right");
-    			add_location(div, file, 64, 2, 1957);
+    			add_location(div, file, 71, 2, 2164);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -27221,44 +27321,44 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const fluent_checkbox_changes = {};
 
-    			if (dirty & /*$$scope*/ 32768) {
+    			if (dirty & /*$$scope*/ 1048576) {
     				fluent_checkbox_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_checked && dirty & /*listSel*/ 2) {
+    			if (!updating_checked && dirty & /*listSel*/ 4) {
     				updating_checked = true;
-    				fluent_checkbox_changes.checked = /*listSel*/ ctx[1];
+    				fluent_checkbox_changes.checked = /*listSel*/ ctx[2];
     				add_flush_callback(() => updating_checked = false);
     			}
 
     			fluent_checkbox.$set(fluent_checkbox_changes);
     			const fluent_textbox_changes = {};
 
-    			if (!updating_value && dirty & /*value*/ 4) {
+    			if (!updating_value && dirty & /*value*/ 8) {
     				updating_value = true;
-    				fluent_textbox_changes.value = /*value*/ ctx[2];
+    				fluent_textbox_changes.value = /*value*/ ctx[3];
     				add_flush_callback(() => updating_value = false);
     			}
 
     			fluent_textbox.$set(fluent_textbox_changes);
     			const fluent_listitem_changes = {};
 
-    			if (dirty & /*$$scope*/ 32768) {
+    			if (dirty & /*$$scope*/ 1048576) {
     				fluent_listitem_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_selected && dirty & /*listSel*/ 2) {
+    			if (!updating_selected && dirty & /*listSel*/ 4) {
     				updating_selected = true;
-    				fluent_listitem_changes.selected = /*listSel*/ ctx[1];
+    				fluent_listitem_changes.selected = /*listSel*/ ctx[2];
     				add_flush_callback(() => updating_selected = false);
     			}
 
     			fluent_listitem.$set(fluent_listitem_changes);
-    			if (!current || dirty & /*value*/ 4) set_data_dev(t8, /*value*/ ctx[2]);
-    			if ((!current || dirty & /*listSel*/ 2) && t11_value !== (t11_value = (/*listSel*/ ctx[1] ? "checked" : "unchecked") + "")) set_data_dev(t11, t11_value);
+    			if (!current || dirty & /*value*/ 8) set_data_dev(t8, /*value*/ ctx[3]);
+    			if ((!current || dirty & /*listSel*/ 4) && t11_value !== (t11_value = (/*listSel*/ ctx[2] ? "checked" : "unchecked") + "")) set_data_dev(t11, t11_value);
 
-    			if (dirty & /*exampleFileList*/ 8) {
-    				each_value = /*exampleFileList*/ ctx[3];
+    			if (dirty & /*exampleFileList*/ 16) {
+    				each_value = /*exampleFileList*/ ctx[4];
     				validate_each_argument(each_value);
     				let i;
 
@@ -27283,7 +27383,7 @@ var app = (function () {
 
     			const fluent_button_changes = {};
 
-    			if (dirty & /*$$scope*/ 32768) {
+    			if (dirty & /*$$scope*/ 1048576) {
     				fluent_button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -27318,14 +27418,282 @@ var app = (function () {
     		block,
     		id: create_right_slot.name,
     		type: "slot",
-    		source: "(65:2) ",
+    		source: "(72:2) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (87:1) <Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
+    // (94:1) <Fluent.ContentDialog bind:open={displayAboutDialog} title="About LCE Tool">
+    function create_default_slot_5(ctx) {
+    	let div2;
+    	let div0;
+    	let img;
+    	let img_src_value;
+    	let t0;
+    	let div1;
+    	let h4;
+    	let t2;
+    	let p;
+    	let t3;
+    	let br;
+    	let t4;
+
+    	const block = {
+    		c: function create() {
+    			div2 = element("div");
+    			div0 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			div1 = element("div");
+    			h4 = element("h4");
+    			h4.textContent = "LCE Tool";
+    			t2 = space();
+    			p = element("p");
+    			t3 = text("Version 1.0.0 ");
+    			br = element("br");
+    			t4 = text("\n\t\t\t\t\tCopyright © Zero Mods, 2024");
+    			if (!src_url_equal(img.src, img_src_value = "favicon.png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "Logo");
+    			attr_dev(img, "width", "96px");
+    			add_location(img, file, 96, 4, 2937);
+    			set_style(div0, "width", "96px");
+    			add_location(div0, file, 95, 3, 2907);
+    			set_style(h4, "margin", "0");
+    			add_location(h4, file, 99, 4, 3044);
+    			add_location(br, file, 101, 19, 3107);
+    			add_location(p, file, 100, 4, 3084);
+    			set_style(div1, "flex", "1");
+    			set_style(div1, "padding-left", "10px");
+    			add_location(div1, file, 98, 3, 3000);
+    			set_style(div2, "display", "flex");
+    			add_location(div2, file, 94, 2, 2876);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
+    			append_dev(div0, img);
+    			append_dev(div2, t0);
+    			append_dev(div2, div1);
+    			append_dev(div1, h4);
+    			append_dev(div1, t2);
+    			append_dev(div1, p);
+    			append_dev(p, t3);
+    			append_dev(p, br);
+    			append_dev(p, t4);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div2);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_5.name,
+    		type: "slot",
+    		source: "(94:1) <Fluent.ContentDialog bind:open={displayAboutDialog} title=\\\"About LCE Tool\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (108:3) <Fluent.Button on:click={() => (window.open("https://github.com/CheatBreakerX/LCE-Tool", "_blank"))}>
+    function create_default_slot_4(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Source Code");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_4.name,
+    		type: "slot",
+    		source: "(108:3) <Fluent.Button on:click={() => (window.open(\\\"https://github.com/CheatBreakerX/LCE-Tool\\\", \\\"_blank\\\"))}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (109:3) <Fluent.Button on:click={() => (window.open("discord://-/invite/dPzJajt", "_self"))}>
+    function create_default_slot_3(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Discord");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_3.name,
+    		type: "slot",
+    		source: "(109:3) <Fluent.Button on:click={() => (window.open(\\\"discord://-/invite/dPzJajt\\\", \\\"_self\\\"))}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (110:3) <Fluent.Button variant="accent" on:click={() => (displayAboutDialog = false)}>
+    function create_default_slot_2(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("OK");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_2.name,
+    		type: "slot",
+    		source: "(110:3) <Fluent.Button variant=\\\"accent\\\" on:click={() => (displayAboutDialog = false)}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (107:2) <svelte:fragment slot="footer">
+    function create_footer_slot_1(ctx) {
+    	let fluent_button0;
+    	let t0;
+    	let fluent_button1;
+    	let t1;
+    	let fluent_button2;
+    	let current;
+
+    	fluent_button0 = new Button({
+    			props: {
+    				$$slots: { default: [create_default_slot_4] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	fluent_button0.$on("click", /*click_handler_2*/ ctx[10]);
+
+    	fluent_button1 = new Button({
+    			props: {
+    				$$slots: { default: [create_default_slot_3] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	fluent_button1.$on("click", /*click_handler_3*/ ctx[11]);
+
+    	fluent_button2 = new Button({
+    			props: {
+    				variant: "accent",
+    				$$slots: { default: [create_default_slot_2] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	fluent_button2.$on("click", /*click_handler_4*/ ctx[12]);
+
+    	const block = {
+    		c: function create() {
+    			create_component(fluent_button0.$$.fragment);
+    			t0 = space();
+    			create_component(fluent_button1.$$.fragment);
+    			t1 = space();
+    			create_component(fluent_button2.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(fluent_button0, target, anchor);
+    			insert_dev(target, t0, anchor);
+    			mount_component(fluent_button1, target, anchor);
+    			insert_dev(target, t1, anchor);
+    			mount_component(fluent_button2, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const fluent_button0_changes = {};
+
+    			if (dirty & /*$$scope*/ 1048576) {
+    				fluent_button0_changes.$$scope = { dirty, ctx };
+    			}
+
+    			fluent_button0.$set(fluent_button0_changes);
+    			const fluent_button1_changes = {};
+
+    			if (dirty & /*$$scope*/ 1048576) {
+    				fluent_button1_changes.$$scope = { dirty, ctx };
+    			}
+
+    			fluent_button1.$set(fluent_button1_changes);
+    			const fluent_button2_changes = {};
+
+    			if (dirty & /*$$scope*/ 1048576) {
+    				fluent_button2_changes.$$scope = { dirty, ctx };
+    			}
+
+    			fluent_button2.$set(fluent_button2_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(fluent_button0.$$.fragment, local);
+    			transition_in(fluent_button1.$$.fragment, local);
+    			transition_in(fluent_button2.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(fluent_button0.$$.fragment, local);
+    			transition_out(fluent_button1.$$.fragment, local);
+    			transition_out(fluent_button2.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(fluent_button0, detaching);
+    			if (detaching) detach_dev(t0);
+    			destroy_component(fluent_button1, detaching);
+    			if (detaching) detach_dev(t1);
+    			destroy_component(fluent_button2, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_footer_slot_1.name,
+    		type: "slot",
+    		source: "(107:2) <svelte:fragment slot=\\\"footer\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (114:1) <Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
     function create_default_slot_1(ctx) {
     	let t0;
     	let a0;
@@ -27355,12 +27723,12 @@ var app = (function () {
     			a1.textContent = "@lifix";
     			t7 = text(" on Discord)");
     			attr_dev(a0, "href", "https://github.com/CheatBreakerX/LCE-Tool");
-    			add_location(a0, file, 88, 69, 2837);
-    			add_location(br0, file, 89, 50, 2954);
-    			add_location(br1, file, 90, 2, 2962);
+    			add_location(a0, file, 115, 69, 3852);
+    			add_location(br0, file, 116, 50, 3969);
+    			add_location(br1, file, 117, 2, 3977);
     			attr_dev(a1, "href", "https://discord.com/users/180430713873498113");
-    			add_location(a1, file, 91, 15, 2983);
-    			add_location(em, file, 91, 2, 2970);
+    			add_location(a1, file, 118, 15, 3998);
+    			add_location(em, file, 118, 2, 3985);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -27392,14 +27760,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(87:1) <Fluent.ContentDialog bind:open={displayWarningDialog} title=\\\"Warning\\\">",
+    		source: "(114:1) <Fluent.ContentDialog bind:open={displayWarningDialog} title=\\\"Warning\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (94:3) <Fluent.Button on:click={() => (displayWarningDialog = false)}>
+    // (121:3) <Fluent.Button on:click={() => (displayWarningDialog = false)}>
     function create_default_slot(ctx) {
     	let t;
 
@@ -27419,14 +27787,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(94:3) <Fluent.Button on:click={() => (displayWarningDialog = false)}>",
+    		source: "(121:3) <Fluent.Button on:click={() => (displayWarningDialog = false)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (93:2) <svelte:fragment slot="footer">
+    // (120:2) <svelte:fragment slot="footer">
     function create_footer_slot(ctx) {
     	let fluent_button;
     	let current;
@@ -27439,7 +27807,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	fluent_button.$on("click", /*click_handler_2*/ ctx[9]);
+    	fluent_button.$on("click", /*click_handler_5*/ ctx[14]);
 
     	const block = {
     		c: function create() {
@@ -27452,7 +27820,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const fluent_button_changes = {};
 
-    			if (dirty & /*$$scope*/ 32768) {
+    			if (dirty & /*$$scope*/ 1048576) {
     				fluent_button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -27476,7 +27844,7 @@ var app = (function () {
     		block,
     		id: create_footer_slot.name,
     		type: "slot",
-    		source: "(93:2) <svelte:fragment slot=\\\"footer\\\">",
+    		source: "(120:2) <svelte:fragment slot=\\\"footer\\\">",
     		ctx
     	});
 
@@ -27486,9 +27854,12 @@ var app = (function () {
     function create_fragment(ctx) {
     	let main;
     	let splitpane;
-    	let t;
-    	let fluent_contentdialog;
+    	let t0;
+    	let fluent_contentdialog0;
     	let updating_open;
+    	let t1;
+    	let fluent_contentdialog1;
+    	let updating_open_1;
     	let current;
 
     	splitpane = new SplitPane({
@@ -27502,11 +27873,35 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	function fluent_contentdialog_open_binding(value) {
-    		/*fluent_contentdialog_open_binding*/ ctx[10](value);
+    	function fluent_contentdialog0_open_binding(value) {
+    		/*fluent_contentdialog0_open_binding*/ ctx[13](value);
     	}
 
-    	let fluent_contentdialog_props = {
+    	let fluent_contentdialog0_props = {
+    		title: "About LCE Tool",
+    		$$slots: {
+    			footer: [create_footer_slot_1],
+    			default: [create_default_slot_5]
+    		},
+    		$$scope: { ctx }
+    	};
+
+    	if (/*displayAboutDialog*/ ctx[0] !== void 0) {
+    		fluent_contentdialog0_props.open = /*displayAboutDialog*/ ctx[0];
+    	}
+
+    	fluent_contentdialog0 = new ContentDialog({
+    			props: fluent_contentdialog0_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(fluent_contentdialog0, 'open', fluent_contentdialog0_open_binding));
+
+    	function fluent_contentdialog1_open_binding(value) {
+    		/*fluent_contentdialog1_open_binding*/ ctx[15](value);
+    	}
+
+    	let fluent_contentdialog1_props = {
     		title: "Warning",
     		$$slots: {
     			footer: [create_footer_slot],
@@ -27515,25 +27910,27 @@ var app = (function () {
     		$$scope: { ctx }
     	};
 
-    	if (/*displayWarningDialog*/ ctx[0] !== void 0) {
-    		fluent_contentdialog_props.open = /*displayWarningDialog*/ ctx[0];
+    	if (/*displayWarningDialog*/ ctx[1] !== void 0) {
+    		fluent_contentdialog1_props.open = /*displayWarningDialog*/ ctx[1];
     	}
 
-    	fluent_contentdialog = new ContentDialog({
-    			props: fluent_contentdialog_props,
+    	fluent_contentdialog1 = new ContentDialog({
+    			props: fluent_contentdialog1_props,
     			$$inline: true
     		});
 
-    	binding_callbacks.push(() => bind(fluent_contentdialog, 'open', fluent_contentdialog_open_binding));
+    	binding_callbacks.push(() => bind(fluent_contentdialog1, 'open', fluent_contentdialog1_open_binding));
 
     	const block = {
     		c: function create() {
     			main = element("main");
     			create_component(splitpane.$$.fragment);
-    			t = space();
-    			create_component(fluent_contentdialog.$$.fragment);
+    			t0 = space();
+    			create_component(fluent_contentdialog0.$$.fragment);
+    			t1 = space();
+    			create_component(fluent_contentdialog1.$$.fragment);
     			attr_dev(main, "class", "svelte-1t6hith");
-    			add_location(main, file, 30, 0, 637);
+    			add_location(main, file, 37, 0, 844);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27541,47 +27938,65 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, main, anchor);
     			mount_component(splitpane, main, null);
-    			append_dev(main, t);
-    			mount_component(fluent_contentdialog, main, null);
+    			append_dev(main, t0);
+    			mount_component(fluent_contentdialog0, main, null);
+    			append_dev(main, t1);
+    			mount_component(fluent_contentdialog1, main, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			const splitpane_changes = {};
 
-    			if (dirty & /*$$scope, displayWarningDialog, listSel, value*/ 32775) {
+    			if (dirty & /*$$scope, displayWarningDialog, listSel, value*/ 1048590) {
     				splitpane_changes.$$scope = { dirty, ctx };
     			}
 
     			splitpane.$set(splitpane_changes);
-    			const fluent_contentdialog_changes = {};
+    			const fluent_contentdialog0_changes = {};
 
-    			if (dirty & /*$$scope, displayWarningDialog*/ 32769) {
-    				fluent_contentdialog_changes.$$scope = { dirty, ctx };
+    			if (dirty & /*$$scope, displayAboutDialog*/ 1048577) {
+    				fluent_contentdialog0_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_open && dirty & /*displayWarningDialog*/ 1) {
+    			if (!updating_open && dirty & /*displayAboutDialog*/ 1) {
     				updating_open = true;
-    				fluent_contentdialog_changes.open = /*displayWarningDialog*/ ctx[0];
+    				fluent_contentdialog0_changes.open = /*displayAboutDialog*/ ctx[0];
     				add_flush_callback(() => updating_open = false);
     			}
 
-    			fluent_contentdialog.$set(fluent_contentdialog_changes);
+    			fluent_contentdialog0.$set(fluent_contentdialog0_changes);
+    			const fluent_contentdialog1_changes = {};
+
+    			if (dirty & /*$$scope, displayWarningDialog*/ 1048578) {
+    				fluent_contentdialog1_changes.$$scope = { dirty, ctx };
+    			}
+
+    			if (!updating_open_1 && dirty & /*displayWarningDialog*/ 2) {
+    				updating_open_1 = true;
+    				fluent_contentdialog1_changes.open = /*displayWarningDialog*/ ctx[1];
+    				add_flush_callback(() => updating_open_1 = false);
+    			}
+
+    			fluent_contentdialog1.$set(fluent_contentdialog1_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(splitpane.$$.fragment, local);
-    			transition_in(fluent_contentdialog.$$.fragment, local);
+    			transition_in(fluent_contentdialog0.$$.fragment, local);
+    			transition_in(fluent_contentdialog1.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(splitpane.$$.fragment, local);
-    			transition_out(fluent_contentdialog.$$.fragment, local);
+    			transition_out(fluent_contentdialog0.$$.fragment, local);
+    			transition_out(fluent_contentdialog1.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
     			destroy_component(splitpane);
-    			destroy_component(fluent_contentdialog);
+    			destroy_component(fluent_contentdialog0);
+    			destroy_component(fluent_contentdialog1);
     		}
     	};
 
@@ -27599,6 +28014,7 @@ var app = (function () {
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
+    	let displayAboutDialog = false;
     	let displayWarningDialog = true;
     	let listSel = false;
     	let value = "Default value";
@@ -27626,6 +28042,12 @@ var app = (function () {
     		}
     	];
 
+    	onMount(() => {
+    		window["electron"].ipcRenderer.on("open-about", (event, data) => {
+    			$$invalidate(0, displayAboutDialog = true);
+    		});
+    	});
+
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -27634,31 +28056,42 @@ var app = (function () {
 
     	function fluent_checkbox_checked_binding(value) {
     		listSel = value;
-    		$$invalidate(1, listSel);
+    		$$invalidate(2, listSel);
     	}
 
     	function fluent_textbox_value_binding(value$1) {
     		value = value$1;
-    		$$invalidate(2, value);
+    		$$invalidate(3, value);
     	}
 
     	function fluent_listitem_selected_binding(value) {
     		listSel = value;
-    		$$invalidate(1, listSel);
+    		$$invalidate(2, listSel);
     	}
 
-    	const click_handler = () => $$invalidate(1, listSel = !listSel);
-    	const click_handler_1 = () => $$invalidate(0, displayWarningDialog = true);
-    	const click_handler_2 = () => $$invalidate(0, displayWarningDialog = false);
+    	const click_handler = () => $$invalidate(2, listSel = !listSel);
+    	const click_handler_1 = () => $$invalidate(1, displayWarningDialog = true);
+    	const click_handler_2 = () => window.open("https://github.com/CheatBreakerX/LCE-Tool", "_blank");
+    	const click_handler_3 = () => window.open("discord://-/invite/dPzJajt", "_self");
+    	const click_handler_4 = () => $$invalidate(0, displayAboutDialog = false);
 
-    	function fluent_contentdialog_open_binding(value) {
+    	function fluent_contentdialog0_open_binding(value) {
+    		displayAboutDialog = value;
+    		$$invalidate(0, displayAboutDialog);
+    	}
+
+    	const click_handler_5 = () => $$invalidate(1, displayWarningDialog = false);
+
+    	function fluent_contentdialog1_open_binding(value) {
     		displayWarningDialog = value;
-    		$$invalidate(0, displayWarningDialog);
+    		$$invalidate(1, displayWarningDialog);
     	}
 
     	$$self.$capture_state = () => ({
     		Fluent,
+    		Svelte,
     		SplitPane,
+    		displayAboutDialog,
     		displayWarningDialog,
     		listSel,
     		value,
@@ -27666,10 +28099,11 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('displayWarningDialog' in $$props) $$invalidate(0, displayWarningDialog = $$props.displayWarningDialog);
-    		if ('listSel' in $$props) $$invalidate(1, listSel = $$props.listSel);
-    		if ('value' in $$props) $$invalidate(2, value = $$props.value);
-    		if ('exampleFileList' in $$props) $$invalidate(3, exampleFileList = $$props.exampleFileList);
+    		if ('displayAboutDialog' in $$props) $$invalidate(0, displayAboutDialog = $$props.displayAboutDialog);
+    		if ('displayWarningDialog' in $$props) $$invalidate(1, displayWarningDialog = $$props.displayWarningDialog);
+    		if ('listSel' in $$props) $$invalidate(2, listSel = $$props.listSel);
+    		if ('value' in $$props) $$invalidate(3, value = $$props.value);
+    		if ('exampleFileList' in $$props) $$invalidate(4, exampleFileList = $$props.exampleFileList);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -27677,6 +28111,7 @@ var app = (function () {
     	}
 
     	return [
+    		displayAboutDialog,
     		displayWarningDialog,
     		listSel,
     		value,
@@ -27687,7 +28122,11 @@ var app = (function () {
     		click_handler,
     		click_handler_1,
     		click_handler_2,
-    		fluent_contentdialog_open_binding
+    		click_handler_3,
+    		click_handler_4,
+    		fluent_contentdialog0_open_binding,
+    		click_handler_5,
+    		fluent_contentdialog1_open_binding
     	];
     }
 

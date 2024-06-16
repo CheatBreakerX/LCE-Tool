@@ -1,11 +1,13 @@
 <script lang="ts">
 	import "fluent-svelte/theme.css";
 	import * as Fluent from "fluent-svelte";
+	import * as Svelte from "svelte";
 	import SplitPane from "./frontend/LCETool/UI/SplitPane.svelte";
 
-	let displayWarningDialog = true;
-	let listSel = false;
-	let value = "Default value";
+	let displayAboutDialog: boolean = false;
+	let displayWarningDialog: boolean = true;
+	let listSel: boolean = false;
+	let value: string = "Default value";
 
 	let exampleFileList = [
 		{
@@ -29,6 +31,12 @@
 			"content": "Content #5"
 		}
 	];
+
+	Svelte.onMount(() => {
+		window["electron"].ipcRenderer.on("open-about", (event, data) => {
+			displayAboutDialog = true;
+		});
+	});
 </script>
 
 <main>
@@ -86,6 +94,26 @@
 			<Fluent.Button on:click={() => (displayWarningDialog = true)}>Open Dialog</Fluent.Button>
 		</div>
 	</SplitPane>
+
+	<Fluent.ContentDialog bind:open={displayAboutDialog} title="About LCE Tool">
+		<div style="display:flex;">
+			<div style="width:96px;">
+				<img src="favicon.png" alt="Logo" width="96px" />
+			</div>
+			<div style="flex:1;padding-left:10px;">
+				<h4 style="margin:0;">LCE Tool</h4>
+				<p>
+					Version 1.0.0 <br/>
+					Copyright &copy; Zero Mods, 2024
+				</p>
+			</div>
+		</div>
+		<svelte:fragment slot="footer">
+			<Fluent.Button on:click={() => (window.open("https://github.com/CheatBreakerX/LCE-Tool", "_blank"))}>Source Code</Fluent.Button>
+			<Fluent.Button on:click={() => (window.open("discord://-/invite/dPzJajt", "_self"))}>Discord</Fluent.Button>
+			<Fluent.Button variant="accent" on:click={() => (displayAboutDialog = false)}>OK</Fluent.Button>
+		</svelte:fragment>
+	</Fluent.ContentDialog>
 
 	<Fluent.ContentDialog bind:open={displayWarningDialog} title="Warning">
 		This software is under construction - things may be unimplemented, not work, or give unexpected output.

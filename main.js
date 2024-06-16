@@ -18,7 +18,7 @@ function isDev() {
 function createWindow() {
 	const isMac = process.platform === "darwin";
 
-	console.log("bruh");
+	app.name = "LCE Tool";
 	Menu.setApplicationMenu(Menu.buildFromTemplate([
 		// { role: 'appMenu' }
 		...(isMac
@@ -26,7 +26,12 @@ function createWindow() {
 				{
 					label: app.name,
 					submenu: [
-						{ role: 'about' },
+						{
+							label: "About LCE Tool",
+							click: () => {
+								mainWindow.webContents.send("open-about");
+							}
+						},
 						{ type: 'separator' },
 						{ role: 'services' },
 						{ type: 'separator' },
@@ -36,7 +41,8 @@ function createWindow() {
 						{ type: 'separator' },
 						{ role: 'quit' }
 					]
-				}]
+				}
+			]
 			: []
 		),
 		// { role: 'fileMenu' }
@@ -113,13 +119,53 @@ function createWindow() {
 			]
 		},
 		{
-			role: 'help',
+			role: "help",
 			submenu: [
 				{
-					label: 'Source Code',
+					label: "MC Reference",
+					submenu: [
+						{
+							label: "Chunk",
+							click: async () => {
+								const { shell } = require("electron");
+								await shell.openExternal("https://minecraft.wiki/w/Chunk_format");
+							}
+						},
+						{
+							label: "Data",
+							click: async () => {
+								const { shell } = require("electron");
+								await shell.openExternal("https://minecraft.wiki/w/Data_values");
+							}
+						},
+						{
+							label: "NBT",
+							click: async () => {
+								const { shell } = require("electron");
+								await shell.openExternal("https://minecraft.wiki/w/NBT_format");
+							}
+						},
+						{
+							label: "Potion",
+							click: async () => {
+								const { shell } = require("electron");
+								await shell.openExternal("https://minecraft-ids.grahamedgecombe.com/potion-calculator");
+							}
+						}
+					]
+				},
+				{ type: "separator" },
+				{
+					label: "Source Code",
 					click: async () => {
-						const { shell } = require('electron')
-						await shell.openExternal('https://github.com/CheatBreakerX/LCE-Tool')
+						const { shell } = require("electron");
+						await shell.openExternal("https://github.com/CheatBreakerX/LCE-Tool");
+					}
+				},
+				{
+					label: "About",
+					click: () => {
+						mainWindow.webContents.send("open-about");
 					}
 				}
 			]
@@ -175,23 +221,19 @@ function createWindow() {
 	customTitlebar.attachTitlebarToWindow(mainWindow);
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
-// Quit when all windows are closed.
+process.on('SIGTERM', () => {
+    app.quit();
+});
+
 app.on('window-all-closed', function () {
-	// On macOS it is common for applications and their menu bar
-	// to stay active until the user quits explicitly with Cmd + Q
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
 });
 
 app.on('activate', function () {
-	// On macOS it's common to re-create a window in the app when the
-	// dock icon is clicked and there are no other windows open.
 	if (mainWindow === null) {
 		createWindow();
 	}
