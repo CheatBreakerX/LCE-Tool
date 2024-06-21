@@ -5,4 +5,5 @@ export interface FileTreeItem {
 	label: string;
 	content: string | FileTreeItem[];
 	selected?: boolean;
+	parent?: FileTreeItem[];
 }

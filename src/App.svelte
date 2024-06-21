@@ -21,6 +21,16 @@
 					type: FileTreeItemType.File,
 					label: "very super (but not actually)",
 					content: "Good content"
+				},
+				{
+					type: FileTreeItemType.File,
+					label: "extremely super (but not actually)",
+					content: "Better content"
+				},
+				{
+					type: FileTreeItemType.File,
+					label: "super super (but not actually)",
+					content: "Best content"
 				}
 			]
 		},
@@ -28,6 +38,31 @@
 			type: FileTreeItemType.File,
 			label: "A file",
 			content: "The content"
+		},
+		{
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
+		},
+		{
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
+		},
+		{
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
+		},
+		{
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
+		},
+		{
+			type: FileTreeItemType.File,
+			label: "Another file",
+			content: "The other content"
 		},
 		{
 			type: FileTreeItemType.File,

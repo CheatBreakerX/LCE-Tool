@@ -1,44 +1,40 @@
 <script lang="ts">
+	import * as Svelte from "svelte";
 	import * as Fluent from "fluent-svelte";
 	import { FileTreeItemType } from "../../../backend/LCETool/UI/FileTreeItemType";
 	import type { FileTreeItem } from "../../../backend/LCETool/UI/FileTreeItem";
 
-	export let files: FileTreeItem[] = [
-		{
-			type: FileTreeItemType.Folder,
-			label: "Super (it doesn't work)",
-			content: [
-				{
-					type: FileTreeItemType.File,
-					label: "very super (but not actually) (it doesn't work)",
-					content: "Good content (it doesn't work)"
-				}
-			]
-		},
-		{
-			type: FileTreeItemType.File,
-			label: "A file (it doesn't work)",
-			content: "The content (it doesn't work)"
-		},
-		{
-			type: FileTreeItemType.File,
-			label: "Another file (it doesn't work)",
-			content: "The other content (it doesn't work)"
+	export let files: FileTreeItem[] = [];
+
+	function getFileList(treeItem: FileTreeItem): FileTreeItem[] {
+		if (treeItem.type != FileTreeItemType.Folder) {
+			return [];
 		}
-	];
+
+		return treeItem.content as FileTreeItem[];
+	}
+
+	Svelte.onMount(() => {
+		for (const file of files) {
+			if (file.selected === null || file.selected === undefined) {
+				file.selected = false;
+			}
+
+			getFileList(file).forEach(subFile => {
+				if (subFile.type === FileTreeItemType.File) {
+					subFile.parent = files;
+				}
+			});
+		}
+	});
 </script>
 
 {#each files as file}
 	{#if file.type == FileTreeItemType.File}
-		{#if file.selected === null || file.selected === undefined}
-			{() => {
-				file.selected = false;
-				return "";
-			}}
-		{/if}
+		<!-- file.content should be of type string (or proper type later on) -->
 		<Fluent.ListItem bind:selected={file.selected} on:click={() => {
 			file.selected = !file.selected;
-			for (var other of files) {
+			for (const other of files) {
 				if (other.type === FileTreeItemType.File && other !== file) {
 					other.selected = false;
 				}
@@ -47,6 +43,7 @@
 			{file.label}
 		</Fluent.ListItem>
 	{:else if file.type == FileTreeItemType.Folder}
+		<!-- file.content should be of type FileTreeItem[] -->
 		<Fluent.ListItem on:click={() => (file.selected = !file.selected)}>
 			{file.label}
 			{#if file.selected}
