@@ -31,7 +31,10 @@
 {#each files as file}
 	{#if file.type == FileTreeItemType.File}
 		{#if file.selected === null || file.selected === undefined}
-			{() => (file.selected = false)}
+			{() => {
+				file.selected = false;
+				return "";
+			}}
 		{/if}
 		<Fluent.ListItem bind:selected={file.selected} on:click={() => {
 			file.selected = !file.selected;

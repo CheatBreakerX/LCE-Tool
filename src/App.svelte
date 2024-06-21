@@ -46,7 +46,7 @@
 <main>
 	<SplitPane>
 		<div slot="left">
-			<FileTree items={exampleFileList} />
+			<FileTree bind:files={exampleFileList} />
 		</div>
 		<div slot="right">
 			<h1>Right Pane</h1>
