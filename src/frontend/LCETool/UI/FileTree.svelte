@@ -4,14 +4,32 @@
 	import { FileTreeItemType } from "../../../backend/LCETool/UI/FileTreeItemType";
 	import type { FileTreeItem } from "../../../backend/LCETool/UI/FileTreeItem";
 
+	export let allFiles: FileTreeItem[] = [];
 	export let files: FileTreeItem[] = [];
 
+	function getAllFiles(): FileTreeItem[] {
+		return allFiles.length == 0 ? files : allFiles;
+	}
+
 	function getFileList(treeItem: FileTreeItem): FileTreeItem[] {
-		if (treeItem.type != FileTreeItemType.Folder) {
+		if (treeItem === null || treeItem === undefined || treeItem.type != FileTreeItemType.Folder) {
 			return [];
 		}
 
 		return treeItem.content as FileTreeItem[];
+	}
+
+	function killNon(filesIn: FileTreeItem[], treeItem: FileTreeItem) {
+		for (const file of filesIn) {
+			if (file.type === FileTreeItemType.File) {
+				if (file !== treeItem) {
+					file.selected = false;
+				}
+			}
+			else if (file.type === FileTreeItemType.Folder) {
+				killNon(file.content as FileTreeItem[], treeItem);
+			}
+		}
 	}
 
 	Svelte.onMount(() => {
@@ -34,25 +52,30 @@
 		<!-- file.content should be of type string (or proper type later on) -->
 		<Fluent.ListItem bind:selected={file.selected} on:click={() => {
 			file.selected = !file.selected;
-			for (const other of files) {
+			killNon(getAllFiles(), file);
+			/*for (const other of files) {
 				if (other.type === FileTreeItemType.File && other !== file) {
 					other.selected = false;
 				}
-			}
+			}*/
 		}}>
-			{file.label}
+			<div style="margin-left:15px;">
+				{file.label}
+			</div>
 		</Fluent.ListItem>
 	{:else if file.type == FileTreeItemType.Folder}
 		<!-- file.content should be of type FileTreeItem[] -->
 		<Fluent.ListItem on:click={() => (file.selected = !file.selected)}>
-			{file.label}
 			{#if file.selected}
-				{` (Open)`}
+				{`▽ `}
+			{:else}
+				{`▷ `}
 			{/if}
+			{file.label}
 		</Fluent.ListItem>
 		{#if file.selected}
 			<div style="margin-left:20px;">
-				<svelte:self bind:files={file.content} />
+				<svelte:self allFiles={getAllFiles()} bind:files={file.content} />
 			</div>
 		{/if}
 	{/if}

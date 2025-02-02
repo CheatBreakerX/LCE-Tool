@@ -31,6 +31,27 @@
 					type: FileTreeItemType.File,
 					label: "super super (but not actually)",
 					content: "Best content"
+				},
+				{
+					type: FileTreeItemType.Folder,
+					label: "most super",
+					content: [
+						{
+							type: FileTreeItemType.File,
+							label: "super very super (but not actually)",
+							content: "super Good content"
+						},
+						{
+							type: FileTreeItemType.File,
+							label: "super extremely super (but not actually)",
+							content: "super Better content"
+						},
+						{
+							type: FileTreeItemType.File,
+							label: "super super super (but not actually)",
+							content: "super Best content"
+						}
+					]
 				}
 			]
 		},
